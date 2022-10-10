@@ -21,18 +21,21 @@ func main() {
 }
 
 func sumation(input []float32, neurons []Neuron) ([]float32, error) {
-	inputLenght := len(input)
-	for _, neuron := range neurons {
-		if inputLenght != len(neuron.Weight) {
-			return nil, errors.New("lenght of input and weight must be same")
-		}
-	}
 	output := make([]float32, len(neurons))
 	for i := 0; i < len(neurons); i++ {
-		for j := 0; j < len(input); j++ {
-			output[i] += input[j] * neurons[i].Weight[j]
+		dot_product, _ := dot(input, neurons[i].Weight)
+		output[i] = dot_product + neurons[i].Bias
+	}
+	return output, nil
+}
+
+func dot(a, b []float32) (float32, error) {
+	if len(a) != len(b) {
+			return 0, errors.New("lenght of input and weight must be same")
 		}
-		output[i] += neurons[i].Bias
+	var output float32 = 0.0
+	for i := 0; i < len(a); i++ {
+		output += a[i] * b[i]
 	}
 	return output, nil
 }
