@@ -1,41 +1,46 @@
 package main
 
 import (
-	"errors"
 	"fmt"
+
+	ts "gorgonia.org/tensor"
 )
 
-type Neuron struct {
-	Bias   float32
-	Weight []float32
-}
-
 func main() {
-	input := []float32{1.0, 2.0, 3.0, 2.5}
-	neurons := []Neuron{
-		{Bias: 2, Weight: []float32{0.2, 0.8, -0.5, 1}},
-		{Bias: 3, Weight: []float32{0.5, -0.91, 0.26, -0.5}},
-		{Bias: 0.5, Weight: []float32{-0.26, -0.27, 0.17, 0.87}},
+	rawInput := []float32{
+		1.0, 2.0, 3.0, 2.5,
+		2.0, 5.0, -1.0, 2.0,
+		-1.5, 2.7, 3.3, -0.8,
 	}
-	fmt.Println(sumation(input, neurons))
+	rawWeight := []float32{
+		0.2, 0.8, -0.5, 1.0,
+		0.5, -0.91, 0.26, 0.5,
+		-0.26, -0.27, 0.17, 0.87,
+	}
+	rawBias := makeBias(3, []float32{2.0, 3.0, 0.5})
+	input := ts.New(ts.WithBacking(rawInput), ts.WithShape(3, 4))
+	weight := ts.New(ts.WithBacking(rawWeight), ts.WithShape(3, 4))
+	bias := ts.New(ts.WithBacking(rawBias), ts.WithShape(3, 3))
+	weight.T()
+	output, err := ts.Dot(input, weight)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(output)
+	out, err := ts.Add(output, bias)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(out)
 }
 
-func sumation(input []float32, neurons []Neuron) ([]float32, error) {
-	output := make([]float32, len(neurons))
-	for i := 0; i < len(neurons); i++ {
-		dot_product, _ := dot(input, neurons[i].Weight)
-		output[i] = dot_product + neurons[i].Bias
-	}
-	return output, nil
-}
-
-func dot(a, b []float32) (float32, error) {
-	if len(a) != len(b) {
-			return 0, errors.New("lenght of input and weight must be same")
+func makeBias(neuronsNum int, bias []float32) []float32 {
+	biasLen := len(bias)
+	res := make([]float32, neuronsNum*biasLen)
+	for i := 0; i < neuronsNum; i++ {
+		for j := 0; j < biasLen; j++ {
+			res[j] = bias[j]
 		}
-	var output float32 = 0.0
-	for i := 0; i < len(a); i++ {
-		output += a[i] * b[i]
 	}
-	return output, nil
+	return res
 }
