@@ -6,22 +6,32 @@ import (
 )
 
 type coordinate struct {
-	x float64
-	y float64
+	X float64
+	Y float64
 }
+
+//TODO: use sin and cos for points coordinate
 
 func SpiralData(samples, classes int) ([]coordinate, []int) {
 	coor := make([]coordinate, 0, samples)
 	class := make([]int, 0, samples)
-	classNum := int(samples / classes)
+	var classNum int = 0
+	if samples % classes == 0 {
+		classNum = int(samples / classes)
+	} else {
+		classNum = int(samples / classes) + 1
+	}
 	rand.Seed(time.Now().UnixNano())
 	for i := 0; i < samples; i++ {
-		coor = append(coor, coordinate{x: rand.Float64() - rand.Float64(), y: rand.Float64() - rand.Float64()})
+		coor = append(coor, coordinate{X: rand.Float64() - rand.Float64(), Y: rand.Float64() - rand.Float64()})
 	}
 	for c := 0; c < classes; c++ {
 		for j := 0; j < classNum; j++ {
 			class = append(class, c)
 		}
+	}
+	if lenght := len(class) - samples; lenght != 0 {
+		class = class[:samples]
 	}
 	return coor, class
 }
