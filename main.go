@@ -3,44 +3,52 @@ package main
 import (
 	"fmt"
 
+	arch "github.com/Mohammad-Hakemi22/NN/architecture"
 	ts "gorgonia.org/tensor"
 )
 
 func main() {
-	rawInput := []float32{
+	layer1, _ := arch.BuildHiddenLayer(3, []float32{
+		0.2, 0.8, -0.5, 1.0,
+		0.5, -0.91, 0.26, -0.5,
+		-0.26, -0.27, 0.17, 0.87,
+	}, []float32{
+		2.0, 3.0, 0.5,
+	}, []int{3, 4}, []int{1, 3})
+
+	layer2, _ := arch.BuildHiddenLayer(3, []float32{
+		0.1, -0.14, 0.5,
+		-0.5, 0.12, -0.33,
+		-0.44, 0.73, -0.13,
+	}, []float32{
+		-1.0, 2.0, -0.5,
+	}, []int{3, 3}, []int{1, 3})
+
+	input, _ := arch.BuildInputLayer([]float32{
 		1.0, 2.0, 3.0, 2.5,
 		2.0, 5.0, -1.0, 2.0,
 		-1.5, 2.7, 3.3, -0.8,
-	}
-	rawWeight := []float32{
-		0.2, 0.8, -0.5, 1.0,
-		0.5, -0.91, 0.26, 0.5,
-		-0.26, -0.27, 0.17, 0.87,
-	}
-	rawBias := makeBias(3, []float32{2.0, 3.0, 0.5})
-	input := ts.New(ts.WithBacking(rawInput), ts.WithShape(3, 4))
-	weight := ts.New(ts.WithBacking(rawWeight), ts.WithShape(3, 4))
-	bias := ts.New(ts.WithBacking(rawBias), ts.WithShape(3, 3))
-	weight.T()
-	output, err := ts.Dot(input, weight)
+	}, []int{3, 4})
+
+	layer1.Weight.T()
+	layer1_output, err := ts.Dot(input.Input, layer1.Weight)
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(output)
-	out, err := ts.Add(output, bias)
+	layer1.MakeBias()
+	out, err := ts.Add(layer1_output, layer1.Bias)
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Println(out)
-}
-
-func makeBias(neuronsNum int, bias []float32) []float32 {
-	biasLen := len(bias)
-	res := make([]float32, neuronsNum*biasLen)
-	for i := 0; i < neuronsNum; i++ {
-		for j := 0; j < biasLen; j++ {
-			res[j] = bias[j]
-		}
+	layer2.Weight.T()
+	layer2_output, err := ts.Dot(out, layer2.Weight)
+	if err != nil {
+		panic(err)
 	}
-	return res
+	layer2.MakeBias()
+	out_final, err := ts.Add(layer2_output, layer2.Bias)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(out_final)
 }
