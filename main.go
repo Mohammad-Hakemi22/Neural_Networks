@@ -4,6 +4,8 @@ import (
 	"fmt"
 
 	arch "github.com/Mohammad-Hakemi22/NN/architecture"
+	"github.com/Mohammad-Hakemi22/NN/plot"
+	"github.com/Mohammad-Hakemi22/NN/utility"
 	ts "gorgonia.org/tensor"
 )
 
@@ -32,23 +34,16 @@ func main() {
 
 	layer1.Weight.T()
 	layer1_output, err := ts.Dot(input.Input, layer1.Weight)
-	if err != nil {
-		panic(err)
-	}
+	utility.ErrorHandler("something went wrong in dot product", err)
 	layer1.MakeBias()
 	out, err := ts.Add(layer1_output, layer1.Bias)
-	if err != nil {
-		fmt.Println(err)
-	}
+	utility.ErrorHandler("something went wrong in adding", err)
 	layer2.Weight.T()
 	layer2_output, err := ts.Dot(out, layer2.Weight)
-	if err != nil {
-		panic(err)
-	}
+	utility.ErrorHandler("something went wrong in dot product", err)
 	layer2.MakeBias()
 	out_final, err := ts.Add(layer2_output, layer2.Bias)
-	if err != nil {
-		fmt.Println(err)
-	}
+	utility.ErrorHandler("something went wrong in adding", err)
 	fmt.Println(out_final)
+	plot.Scatter()
 }
