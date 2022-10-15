@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/Mohammad-Hakemi22/NN/datasets"
+	"github.com/Mohammad-Hakemi22/NN/utility"
 	"gonum.org/v1/plot"
 	"gonum.org/v1/plot/plotter"
 )
@@ -28,16 +29,12 @@ func Scatter() {
 			}
 		}
 		scatter, err := plotter.NewScatter(xys)
-		if err != nil {
-			log.Fatalln(err)
-		}
+		utility.ErrorHandler("can't initial scatter plot", err)
 		scatter.Color = val
 		p.Add(scatter)
 	}
 	wt, err := p.WriterTo(450, 400, "png")
-	if err != nil {
-		log.Fatalln(err)
-	}
+	utility.ErrorHandler("can't write to writer", err)
 	path := "plot.png"
 	f, err := os.Create(path)
 	if err != nil {
@@ -45,9 +42,7 @@ func Scatter() {
 	}
 	defer func() {
 		err := f.Close()
-		if err != nil {
-			log.Fatalln(err)
-		}
+		utility.ErrorHandler("something went wrong in closing file", err)
 	}()
 	wt.WriteTo(f)
 }
