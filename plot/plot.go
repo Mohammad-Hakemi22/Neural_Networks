@@ -25,7 +25,7 @@ func Scatter() {
 		xys := plotter.XYs{}
 		for i := 0; i < len(x); i++ {
 			if y[i] == int(key) {
-				xys = append(xys, plotter.XY{X: x[i].X, Y: x[i].Y})
+				xys = append(xys, plotter.XY{X: x[i][0], Y: x[i][1]})
 			}
 		}
 		scatter, err := plotter.NewScatter(xys)
