@@ -5,6 +5,7 @@ import (
 
 	"github.com/Mohammad-Hakemi22/NN/layers"
 	"github.com/Mohammad-Hakemi22/NN/datasets"
+	"github.com/Mohammad-Hakemi22/NN/activationfunc"
 	// arch "github.com/Mohammad-Hakemi22/NN/architecture"
 	// "github.com/Mohammad-Hakemi22/NN/plot"
 	// "github.com/Mohammad-Hakemi22/NN/utility"
@@ -56,7 +57,10 @@ func main() {
 	fmt.Println("--------------Bias-----------")
 	fmt.Println(l1.Bias)
 	fmt.Println("-------------output------------")
+	ReLU := activationfunc.NewReLU()
 	input := ts.New(ts.WithBacking(input_data), ts.WithShape(50, 2))
 	l1.Forward(input)
-	fmt.Println(l1.Output)
+	ReLU.Forward(l1.Output)
+	// fmt.Println(l1.Output)
+	fmt.Println(ReLU.Output)
 }
