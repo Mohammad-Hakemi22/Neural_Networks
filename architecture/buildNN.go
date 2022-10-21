@@ -5,9 +5,9 @@ import (
 	ts "gorgonia.org/tensor"
 )
 
-func BuildHiddenLayer(neuronsNum int, weight, bias []float32, weightShape, biasShape []int) (*layer.HiddenLayer, error) {
-	hl := layer.HiddenLayer{
-		NeuronsNumber: int64(neuronsNum),
+func BuildDenseLayer(neuronsNum int, weight, bias []float32, weightShape, biasShape []int) (*layer.DenseLayer, error) {
+	hl := layer.DenseLayer{
+		NeuronsNumber: neuronsNum,
 		Weight: ts.New(
 			ts.WithShape(weightShape...),
 			ts.WithBacking(weight)),
